@@ -1,0 +1,97 @@
+{% extends "post.html" %}
+{% block postcomments %}
+<h5 class="mb-3">Comments ({{ comments|length }})</h5>
+<article class="media content-section">
+    <div class="media-body">
+    <form method="POST" action="" enctype="multipart/form-data">
+        <fieldset class="form-group">
+               <div class="form-group">
+                   {{ form.comment.label(class="form-control-label") }}
+                   {% if form.comment.errors %}
+                   {{ form.comment(class="form-control form-control-lg is-invalid", placeholder="Write a comment...") }}
+                   <div class="invalid-feedback">
+                       {% for error in form.comment.errors %}
+                       <span>{{ error }}</span>
+                       {% endfor %}
+                   </div>
+                   {% else %}
+                   {{ form.comment(class="form-control form-control-lg") }}
+                   {% endif %}
+               </div>
+            <div class="form-group">
+                {{ form.commentimg.label() }}
+                {{ form.commentimg(class="form-control-file") }}
+                {% if form.commentimg.errors %}
+                {% for error in form.commentimg.errors %}
+                <span class="text-danger">{{ error }}</span></br>
+                {% endfor %}
+                {% endif %}
+            </div>
+            </fieldset>
+  <div class="form-group">
+      {{ form.submit(class="btn btn-outline-info") }}
+  </div>
+</form>
+</article>
+{% for comment in comments %}
+
+<article class="media content-section">
+    <img class="rounded-circle article-img comment-img"
+        src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2"
+                href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ comment.author_comment.username }}</a>
+            <small class="text-muted float-right">
+                {% if comment.date_commented.date()==today.date() %}
+                {{ comment.date_commented.strftime('%H:%M') }}
+                {% else %}
+                {{ comment.date_commented.strftime('%d-%m-%Y') }}
+                {% endif %}
+            </small>
+
+        </div>
+        {% if comment.author_comment == current_user %}
+        <div class="float-right">
+            <!-- <a style="cursor:pointer; color:grey" href="{{ url_for('posts.update_post', post_id=post.id) }}"><i
+                    class="fas fa-pencil-alt fa-1x pr-3" aria-hidden="true"></i></a> -->
+            <span data-toggle="modal" data-target="#deleteModalComment">
+                <i class="far fa-trash-alt fa-1x red-text pr-3" style="cursor:pointer; color:#dc3545"
+                    aria-hidden="true"></i>
+            </span>
+        </div>
+        {% endif %}
+        <h5 class="article-title">{{ comment.title }}</h5>
+        <p class="article-content">{{ comment.post_comment}}</p>
+        {% if comment.comment_img %}
+        <div class="post-img">
+            <img src="{{ url_for('static', filename='comment_pictures/' + comment.comment_img) }}">
+        </div>
+        {% endif %}
+       
+
+    </div>
+</article>
+
+
+<div class="modal fade" id="deleteModalComment" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Comment?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <form action="{{ url_for('posts.delete_comment', comment_id=comment.id) }}" method="POST">
+                    <input class="btn btn-danger" type="submit" value="Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock postcomments %}

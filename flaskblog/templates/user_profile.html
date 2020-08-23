@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="cover">
+            <div class="media cover-border">
+                <img class="cover-photo-img" src="{{ cover_photo }}">
+
+            </div>
+        </div>
+    <div class="cover-dp-position">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body profile-heading">
+          <h2 class="account-heading">{{ user.username }}</h2>
+          <p class="text-secondary">{{ user.email }}</p>
+        </div>
+      </div>
+        <!-- <form method="POST" action="" enctype="multipart/form-data"> -->
+            
+            <fieldset class="form-group">
+                {% if user.bio %}
+                <div class="form-group">
+                    
+                <i class="fas fa-comment fa-2x pink-text pr-3" aria-hidden="true"></i>{{ user.bio}}
+                </div>
+                {% endif %}
+                {% if user.dob %}
+                   <div class="form-group">
+                    <i class="fas fa-birthday-cake fa-2x pink-text pr-3"
+                        aria-hidden="true"></i>{{ user.dob.strftime('%d-%m-%Y') }}
+                   </div>
+                {% endif %}
+                {% if user.location %}
+                   <div class="form-group">
+                       <i class="fas fa-map-marker-alt fa-2x pink-text pr-3" aria-hidden="true"></i>{{ user.location}}
+                   </div>
+                {% endif %}
+                  {% if user.member_since %}
+                  <div class="form-group member-since">
+                      Member Since {{ user.member_since.strftime('%d-%m-%Y')}}
+                  </div>
+                  {% endif %}
+                   
+                
+            </fieldset>
+        <!-- </form> -->
+    </div>
+    </div>
+    {% block posts %}
+
+    {% endblock posts%}
+{% endblock content %}

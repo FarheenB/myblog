@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+        <small class="text-muted float-right">
+          {% if post.date_posted.date()==today.date() %}
+          {{ post.date_posted.strftime('%H:%M') }}
+          {% else %}
+          {{ post.date_posted.strftime('%d-%m-%Y') }}
+          {% endif %}
+        </small>
+        
+      </div>
+      {% if post.author == current_user %}
+      <div class="float-right">
+        <a style="cursor:pointer; color:grey" href="{{ url_for('posts.update_post', post_id=post.id) }}"><i
+            class="fas fa-pencil-alt fa-1x pr-3"
+            aria-hidden="true"></i></a>
+        <span data-toggle="modal" data-target="#deleteModal">
+          <i class="far fa-trash-alt fa-1x red-text pr-3" style="cursor:pointer; color:#dc3545" aria-hidden="true"></i>
+        </span>
+      </div>
+      {% endif %}
+      <h5 class="article-title">{{ post.title }}</h5>
+      <p class="article-content">{{ post.content }}</p>
+      {% if post.post_img %}
+        <div class="post-img">
+          <img
+          src="{{ url_for('static', filename='post_pictures/' + post.post_img) }}">
+        </div>
+      {% endif %}
+      <div class="comment section">
+        <span class="post-metadata">
+          <a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}"><i
+              class="far fa-thumbs-up fa-1x"></i></a>{{ like_count }}
+          <a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}"><i
+              class="far fa-thumbs-down fa-1x"></i></a>{{ dislike_count }}
+          <a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">Comment</a>({{ comments|length }})
+        </span>
+
+      </div>
+    
+    </div>
+  </article>
+ 
+  {% block postcomments %}
+
+  {% endblock postcomments %}
+
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
